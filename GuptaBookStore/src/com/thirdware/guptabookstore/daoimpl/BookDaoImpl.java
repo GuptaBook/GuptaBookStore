@@ -27,6 +27,7 @@ public class BookDaoImpl implements BookDao {
 			return null;
 		}
 		try {
+			System.out.println("Successfully connected to DB");
 			String query = "insert into book(bookid,bookname,bookdesc,quantity,price,subid,authid) values(?,?,?,?,?,?,?)";
 			psmt = con.prepareStatement(query);
 			psmt.setInt(1, getMaxId()+1);
