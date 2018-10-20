@@ -2,7 +2,6 @@ package com.thirdware.guptabookstore.servlets;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,19 +10,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.thirdware.guptabookstore.dao.BookDao;
 import com.thirdware.guptabookstore.daoimpl.BookDaoImpl;
-import com.thirdware.guptabookstore.models.Book;
 
 /**
- * Servlet implementation class FetchBookByIdServlet
+ * Servlet implementation class ApproveBookServlet
  */
-@WebServlet("/FetchBookByIdServlet")
-public class FetchBookByIdServlet extends HttpServlet {
+@WebServlet("/ApproveBookServlet")
+public class ApproveBookServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public FetchBookByIdServlet() {
+    public ApproveBookServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -33,12 +31,11 @@ public class FetchBookByIdServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		int bid=Integer.parseInt(request.getParameter("id"));
+		int id=Integer.parseInt(request.getParameter("id"));
+		System.out.println("approve method is working"+id);
 		BookDao bookDao=new BookDaoImpl();
-		Book b=bookDao.fetchBookById(bid);
-		request.setAttribute("bookdetail", b);
-		RequestDispatcher rd=request.getRequestDispatcher("views/book/bookdetails.jsp");
-		rd.forward(request, response);
+		bookDao.approveBook(id);
+		System.out.println("approved successfully");
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 

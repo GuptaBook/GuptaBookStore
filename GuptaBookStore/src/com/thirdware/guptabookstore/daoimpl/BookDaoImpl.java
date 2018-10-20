@@ -27,7 +27,7 @@ public class BookDaoImpl implements BookDao {
 			return null;
 		}
 		try {
-			String query = "insert into book(bookid,bookname,bookdesc,quantity,price,subid,authid) values(?,?,?,?,?,?,?)";
+			String query = "insert into book(bookid,bookname,bookdesc,quantity,price,subid,authid,bookstatus) values(?,?,?,?,?,?,?,0)";
 			psmt = con.prepareStatement(query);
 			psmt.setInt(1, getMaxId()+1);
 			psmt.setString(2, book.getBookname());
@@ -81,7 +81,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public Book fetchBookBId(int bid) {
+	public Book fetchBookById(int bid) {
 		// TODO Auto-generated method stub
 		Connection con = connectionProvider.CONN();
 		if (con == null) {
@@ -172,7 +172,7 @@ public class BookDaoImpl implements BookDao {
 	private int getMaxId() {
 		// TODO Auto-generated method stub
 		int maxId=0;
-		String query="select max(userid) from usertable";
+		String query="select max(bookid) from book";
 		try{
 			ConnectionProvider databaseConnection = new ConnectionProvider();
 			Connection con = databaseConnection.CONN();
@@ -213,6 +213,135 @@ public class BookDaoImpl implements BookDao {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+		return null;
+	}
+
+	@Override
+	public Subject getSubById(int id) {
+		// TODO Auto-generated method stub
+		Connection con = connectionProvider.CONN();
+		if (con == null) {
+			System.out.println("Not connected, Please check the connection!");
+			return null;
+		}
+		try {
+			Subject sub=new Subject();
+			String query = "select * from subject where subid=?";
+			psmt=con.prepareStatement(query);
+			psmt.setInt(1, id);
+			ResultSet result=psmt.executeQuery();
+			while(result.next()){				
+				sub.setSubid(result.getInt(1));				
+				sub.setSubname(result.getString(2));
+				sub.setSubdescription(result.getString(3));		
+			}
+			psmt.close();
+			con.close();
+			return sub;
+			}catch(Exception e){
+				System.out.println(e);
+				}
+		return null;
+	}
+
+	@Override
+	public Author getAuthById(int id) {
+		// TODO Auto-generated method stub
+		Connection con = connectionProvider.CONN();
+		if (con == null) {
+			System.out.println("Not connected, Please check the connection!");
+			return null;
+		}
+		try {
+			Author auth=new Author();
+			String query = "select * from author where authorid=?";
+			psmt=con.prepareStatement(query);
+			psmt.setInt(1, id);
+			ResultSet result=psmt.executeQuery();
+			while(result.next()){				
+				auth.setAuthid(result.getInt(1));				
+				auth.setAuthname(result.getString(2));
+				auth.setAuthdesc(result.getString(3));		
+			}
+			psmt.close();
+			con.close();
+			return auth;
+			}catch(Exception e){
+				System.out.println(e);
+				}
+		return null;
+	}
+
+	@Override
+	public List<Book> getSubjectstatus() {
+		// TODO Auto-generated method stub
+		Connection con = connectionProvider.CONN();
+		if (con == null) {
+			System.out.println("Not connected, Please check the connection!");
+			return null;
+		}
+		try {
+			ArrayList<Book> ls=new ArrayList<>();
+			String query = "select * from book where bookstatus=0";
+			psmt=con.prepareStatement(query);
+			ResultSet result=psmt.executeQuery();
+			while(result.next()){
+				Book b=new Book();
+				b.setBookid(result.getInt(1));
+				b.setBookname(result.getString(2));
+				b.setBookdesc(result.getString(3));
+				b.setQuantity(result.getInt(4));
+				b.setPrice(result.getFloat(5));
+				b.setSubid(result.getInt(6));
+				b.setAuthid(result.getInt(7));
+				ls.add(b);				
+			}
+			psmt.close();
+			con.close();
+			return ls;
+			}catch(Exception e){
+				System.out.println(e);
+				}
+		return null;
+	}
+
+	@Override
+	public Book approveBook(int id) {
+		// TODO Auto-generated method stub
+		Connection con = connectionProvider.CONN();
+		if (con == null) {
+			System.out.println("Not connected, Please check the connection!");
+			return null;
+		}
+		try {
+			String query = "update book set bookstatus=1 where bookid=?";
+			psmt = con.prepareStatement(query);
+			psmt.setInt(1, id);
+			psmt.executeUpdate();
+			System.out.println("Updated successfully");
+			}catch(Exception e){
+				System.out.println(e);
+				}
+		return null;
+	}
+
+	@Override
+	public Book rejectBook(int id) {
+		// TODO Auto-generated method stub
+		Connection con = connectionProvider.CONN();
+		if (con == null) {
+			System.out.println("Not connected, Please check the connection!");
+			return null;
+		}
+		try {
+			String query = "delete from book where bookid=?";
+			psmt = con.prepareStatement(query);
+			psmt.setInt(1, id);
+			psmt.executeUpdate();
+			System.out.println("Rejected successfully");
+			}catch(Exception e){
+				System.out.println(e);
+				}
 		return null;
 	}
 }
