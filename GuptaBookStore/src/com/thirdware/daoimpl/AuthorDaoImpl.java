@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class AuthorDaoImpl implements AuthorDao {
 			try {
 				String query = "insert into author values(?,?,?)";
 				PreparedStatement psmt = con.prepareStatement(query);
-                System.out.println("inside the insert method on daoimpl "+(getMaxId()+1));
+
 				psmt.setInt(1, getMaxId() + 1);
 				psmt.setString(2, author.getAuthorname());
 				psmt.setString(3, author.getAuthordescription());
@@ -54,16 +53,20 @@ public class AuthorDaoImpl implements AuthorDao {
 		if (con == null) {
 			System.out.println("Not connected, Please check");
 		} else {
-			String query = "select * from book where authid = ? and bookstatus=1";
+			String query = "select * from book where authid = ?";
 			try {
 				List<Book> ls=new ArrayList<>();
 				PreparedStatement psmt = con.prepareStatement(query);
 				psmt.setInt(1, id);
+				
 				ResultSet result = psmt.executeQuery();
+				Book book=new Book();
+				
 				while (result.next()) {
-					System.out.println(result.getInt("bookid")+" "+result.getInt(1) +" "+result.getInt(7) );
-					Book book=new Book();
-					book.setBookid(result.getInt("bookid"));
+					
+					
+					
+					book.setBookid(result.getInt(1));
 					book.setBookname(result.getString(2));
 					book.setBookdesc(result.getString(3));
 					book.setQuantity(result.getInt(4));
@@ -85,7 +88,7 @@ public class AuthorDaoImpl implements AuthorDao {
 
 	private int getMaxId() {
 			// TODO Auto-generated method stub
-		System.out.println("getmaxid method is entering");
+		
 			int maxId=0;
 			String query="select max(authorid) from author";
 			try{
@@ -103,5 +106,33 @@ public class AuthorDaoImpl implements AuthorDao {
 			}catch(Exception e){System.out.println(e);}
 			return -1;
 		}
+
+	@Override
+	public List<Author> getallAuthor() {
+		// TODO Auto-generated method stub
+		ConnectionProvider databaseConnection = new ConnectionProvider();
+		Connection con = databaseConnection.CONN();
+		if(con==null)
+			System.out.println("please check the connection");
+		else{
+			try{
+				List<Author> ls=new ArrayList<>();
+			String query="select * from author";
+			PreparedStatement psmt=con.prepareStatement(query);
+			ResultSet result=psmt.executeQuery();
+			while(result.next()){
+				Author auth=new Author();
+				auth.setAuthorid(result.getInt(1));
+				auth.setAuthorname(result.getString(2));
+				auth.setAuthordescription(result.getString(3));
+				ls.add(auth);
+			}
+			return ls;
+			}catch(Exception e){
+				System.out.println(e);
+				}
+		}
+		return null;
+	}
 
 }
