@@ -27,7 +27,12 @@ public class BookDaoImpl implements BookDao {
 			return null;
 		}
 		try {
+<<<<<<< HEAD
 			String query = "insert into book(bookid,bookname,bookdesc,quantity,price,subid,authid,bookstatus) values(?,?,?,?,?,?,?,0)";
+=======
+			System.out.println("Successfully connected to DB");
+			String query = "insert into book(bookid,bookname,bookdesc,quantity,price,subid,authid) values(?,?,?,?,?,?,?)";
+>>>>>>> c73d46058d4c75957486f3e110e8b6bbea712c19
 			psmt = con.prepareStatement(query);
 			psmt.setInt(1, getMaxId()+1);
 			psmt.setString(2, book.getBookname());
