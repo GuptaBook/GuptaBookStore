@@ -2,7 +2,6 @@ package com.thirdware.guptabookstore.servlets;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,62 +12,43 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.thirdware.guptabookstore.dao.BookDao;
-import com.thirdware.guptabookstore.daoimpl.BookDaoImpl;
-import com.thirdware.guptabookstore.models.Book;
-
 /**
- * Servlet implementation class InsertBookServlet
+ * Servlet implementation class uploadservlet
  */
-@WebServlet("/InsertBookServlet")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
 maxFileSize = 1024 * 1024 * 10, // 10MB
 maxRequestSize = 1024 * 1024 * 50) // 50MB
-public class InsertBookServlet extends HttpServlet {
+@WebServlet("/uploadservlet")
+public class uploadservlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+
 	public static final String SAVE_DIRECTORY = "uploadDir";
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public InsertBookServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		/*String rootContext = request.getServletContext().getRealPath("/");*/
-		
+	public uploadservlet() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub\
-		PrintWriter out=response.getWriter();
-		String bookname=request.getParameter("bookname");
-		String bookdesc=request.getParameter("bookdesc");
-		int quantity=Integer.parseInt(request.getParameter("quantity"));
-		float price=Float.parseFloat(request.getParameter("price"));
-		int subid=Integer.parseInt(request.getParameter("subid"));
-		int authid=Integer.parseInt(request.getParameter("authid"));
-		Book book=new Book();
-		book.setBookname(bookname);
-		book.setBookdesc(bookdesc);
-		book.setQuantity(quantity);
-		book.setPrice(price);
-		book.setSubid(subid);
-		book.setAuthid(authid);
-		BookDao bookDao=new BookDaoImpl();
-		Book b=bookDao.insetBook(book);
-		System.out.println("Inserted Successfully "+b.getBookid());
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
-		
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		try {
 			String description = request.getParameter("description");
 			System.out.println("Description: " + description);
@@ -93,7 +73,8 @@ public class InsertBookServlet extends HttpServlet {
 
 			// Part list (multi files).
 			for (Part part : request.getParts()) {
-				String fileName = b.getBookid()+".png";
+				int i=0;
+				String fileName = String.valueOf(++i);
 				if (fileName != null && fileName.length() > 0) {
 					String filePath = fullSavePath + File.separator + fileName;
 					System.out.println("Write attachment to file: " + filePath);
@@ -102,7 +83,7 @@ public class InsertBookServlet extends HttpServlet {
 				}
 			}
 			// Upload successfully!.
-			response.sendRedirect(request.getContextPath() + "/insertbook.jsp");
+			response.sendRedirect(request.getContextPath() + "/uploadFileResults");
 		} catch (Exception e) {
 			e.printStackTrace();
 			request.setAttribute("errorMessage", "Error: " + e.getMessage());
@@ -110,9 +91,26 @@ public class InsertBookServlet extends HttpServlet {
 			dispatcher.forward(request, response);
 			doGet(request, response);
 		}
-		
-		System.out.println("Inserted Successfully");
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	private String extractFileName(Part part) {
+		// form-data; name="file"; filename="C:\file1.zip"
+		// form-data; name="file"; filename="C:\Note\file2.zip"
+		String contentDisp = part.getHeader("content-disposition");
+		String[] items = contentDisp.split(";");
+		for (String s : items) {
+			if (s.trim().startsWith("filename")) {
+				// C:\file1.zip
+				// C:\Note\file2.zip
+				String clientFileName = s.substring(s.indexOf("=") + 2, s.length() - 1);
+				clientFileName = clientFileName.replace("\\", "/");
+				int i = clientFileName.lastIndexOf('/');
+				// file1.zip
+				// file2.zip
+				return clientFileName.substring(i + 1);
+			}
+		}
+		return null;
 	}
 
 }

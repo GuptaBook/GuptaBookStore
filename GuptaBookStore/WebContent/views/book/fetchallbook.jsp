@@ -8,8 +8,12 @@
 <title>Fetch all books</title>
 </head>
 <body>
+ <c:if test = "${booklis == null}">
+ <p>No match found</p>
+</c:if>
 	<ul>
 		<c:forEach items="${booklist}" var="lb">
+		<img src="<c:url value='resources/images/uploadDir/${lb.getBookid()}.png'/>" alt="noimg">
 			<li><a href="FetchBookByIdServlet?id=${lb.bookid}"> ${lb.bookname}<br>${lb.price}<br>
 			</a><br></li>
 		</c:forEach>

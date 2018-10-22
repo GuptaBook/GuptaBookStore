@@ -27,12 +27,12 @@ public class BookDaoImpl implements BookDao {
 			return null;
 		}
 		try {
-<<<<<<< HEAD
+
 			String query = "insert into book(bookid,bookname,bookdesc,quantity,price,subid,authid,bookstatus) values(?,?,?,?,?,?,?,0)";
-=======
-			System.out.println("Successfully connected to DB");
-			String query = "insert into book(bookid,bookname,bookdesc,quantity,price,subid,authid) values(?,?,?,?,?,?,?)";
->>>>>>> c73d46058d4c75957486f3e110e8b6bbea712c19
+
+			//System.out.println("Successfully connected to DB");
+			//String insert = "insert into book(bookid,bookname,bookdesc,quantity,price,subid,authid) values(?,?,?,?,?,?,?)";
+
 			psmt = con.prepareStatement(query);
 			psmt.setInt(1, getMaxId()+1);
 			psmt.setString(2, book.getBookname());
@@ -41,10 +41,12 @@ public class BookDaoImpl implements BookDao {
 			psmt.setFloat(5,book.getPrice());
 			psmt.setInt(6, book.getSubid());
 			psmt.setInt(7, book.getAuthid());
+			//psmt.setInt(8, 0);
 			psmt.executeUpdate();
 			System.out.println("Inserted successfully");
 			psmt.close();
 			con.close();
+			book.setBookid(getMaxId());
 			return book;
 		} catch (Exception e) {
 			System.out.println(e);
@@ -344,6 +346,40 @@ public class BookDaoImpl implements BookDao {
 			psmt.setInt(1, id);
 			psmt.executeUpdate();
 			System.out.println("Rejected successfully");
+			}catch(Exception e){
+				System.out.println(e);
+				}
+		return null;
+	}
+
+	@Override
+	public List<Book> searchBook(String name) {
+		// TODO Auto-generated method stub
+		Connection con = connectionProvider.CONN();
+		if (con == null) {
+			System.out.println("Not connected, Please check the connection!");
+			return null;
+		}
+		try {
+			ArrayList<Book> ls=new ArrayList<>();
+			String query = "select * from book where bookstatus=1 and bookname Like '"+name+"%'";
+			System.out.println(query);
+			psmt=con.prepareStatement(query);
+			ResultSet result=psmt.executeQuery();
+			while(result.next()){
+				Book b=new Book();
+				b.setBookid(result.getInt(1));
+				b.setBookname(result.getString(2));
+				b.setBookdesc(result.getString(3));
+				b.setQuantity(result.getInt(4));
+				b.setPrice(result.getFloat(5));
+				b.setSubid(result.getInt(6));
+				b.setAuthid(result.getInt(7));
+				ls.add(b);				
+			}
+			psmt.close();
+			con.close();
+			return ls;
 			}catch(Exception e){
 				System.out.println(e);
 				}

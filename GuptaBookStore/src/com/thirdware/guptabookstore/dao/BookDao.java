@@ -18,4 +18,5 @@ public interface BookDao {
 	List<Book> getSubjectstatus();
 	Book approveBook(int id);
 	Book rejectBook(int id);
+	List<Book> searchBook(String name);
 }

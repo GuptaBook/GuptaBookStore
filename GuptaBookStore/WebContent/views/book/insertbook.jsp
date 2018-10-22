@@ -8,7 +8,7 @@
 <title>Insert Book</title>
 </head>
 <body>
-	<form action="InsertBookServlet">
+	<form action="InsertBookServlet"  method="post" enctype="multipart/form-data">
 		<table align="center">
 			<tr>
 				<td>Book Name:</td>
@@ -39,6 +39,10 @@
 							<option value="${al.authid}">${al.authname}</option>
 						</c:forEach>
 				</select></td>
+			</tr>
+			<tr>
+				<td>Image:</td>
+				<td><input type="file" name="file"></td>
 			</tr>
 			<tr>
 				<td><input type="submit"></td>
